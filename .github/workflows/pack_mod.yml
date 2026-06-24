@@ -45,7 +45,8 @@ jobs:
           mv ./src/scripts ./src/audio ./src/content ./src/dialogues ./src/"${MODNAME}.mod" ./out/"${MODNAME}"
           echo "modname=\"${MODNAME}\"" >> "$GITHUB_OUTPUT"
       - name: Zip File
-        run: zip -r ${{ fromJson(steps.mod-repack.outputs.modname) }}.zip ./out/${{ fromJson(steps.mod-repack.outputs.modname) }}
+        working-directory: ./out
+        run: zip -r ../${{ fromJson(steps.mod-repack.outputs.modname) }}.zip .
       - name: Upload File
         id: nexus-upload
         uses: Nexus-Mods/upload-action@v1.0.0-beta.8
