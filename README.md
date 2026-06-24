@@ -5,12 +5,12 @@ Your mod files must be in the root of your repository, the name of the nesting f
 ## Inputs
 | **Name** | **Type** | **Required?** | **Details** |
 |---|---|---|---|
-| nexusmods_mod_id | string | true | ID for your mod entry in NExusMods, this is the number at the end when viewing your mod page. |
+| file_id | string | true | ID for the file group. [How to find it here](https://github.com/Nexus-Mods/upload-action/tree/v1.0.0-beta.8#how-to-find-the-file-id) |
 | mod_version | string | false | The version name to be used when the mod is uploaded. |
 | mod_description | string | false | The changelog to be used when the mod is uploaded. |
 | checkout_ref | string | true | Checkout reference, can be tag name or commit hash. |                                       |
 
-Secrets for `NEXUSMODS_APIKEY` and `NEXUSMODS_SESSION_COOKIE` may be acquired according to instructions [here](https://butr.github.io/documentation/advanced/publishing-on-github/#nexusmods)
+Secrets for `NEXUSMODS_APIKEY` may be acquired according to instructions [here](https://www.nexusmods.com/settings/api-keys)
 
 ## Example
 This will automatically publish your mod with version name equal to your release name and changelog equal to your release body.
@@ -26,11 +26,10 @@ jobs:
   fetch-upload:
     uses: bountygiver/DarktideModAutoUploader/.github/workflows/pack_mod.yml@v3
     with:
-      nexusmods_mod_id: <replace with your nexus mod ID>
+      file_id: <replace with your file hroup id>
       mod_version: ${{ github.event.release.name }}
       mod_description: ${{ github.event.release.body }}
       checkout_ref: ${{ github.event.release.tag_name }}
     secrets:
       NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
-      NEXUSMODS_SESSION_COOKIE: ${{ secrets.NEXUSMODS_SESSION_COOKIE }}
 ```
