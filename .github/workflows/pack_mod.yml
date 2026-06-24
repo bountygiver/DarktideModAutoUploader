@@ -51,7 +51,7 @@ jobs:
         uses: Nexus-Mods/upload-action@v1.0.0-beta.8
         if: ${{ inputs.upload }}
         with:
-          api_key: ${{ secrets.NEXUSMODS_SESSION_COOKIE }}
+          api_key: ${{ secrets.NEXUSMODS_APIKEY }}
           file_id: ${{ inputs.file_id }}
           filename: ${{ fromJson(steps.mod-repack.outputs.modname) }}.zip
           version: ${{ inputs.mod_version }}
