@@ -23,8 +23,6 @@ on:
     secrets:
       NEXUSMODS_APIKEY:
         required: true
-      NEXUSMODS_SESSION_COOKIE:
-        required: true
 
 jobs:
   pack-mod:
