@@ -3,7 +3,7 @@ name: Extract scripts and mod file and upload
 on:
   workflow_call:
     inputs:
-      nexusmods_mod_id:
+      file_id:
         required: true
         type: string
       mod_version:
@@ -46,24 +46,19 @@ jobs:
           set +e
           mv ./src/scripts ./src/audio ./src/content ./src/dialogues ./src/"${MODNAME}.mod" ./out/"${MODNAME}"
           echo "modname=\"${MODNAME}\"" >> "$GITHUB_OUTPUT"
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Zip File
+        run: zip -r ${{ fromJson(steps.mod-repack.outputs.modname) }}.zip ./out/${{ fromJson(steps.mod-repack.outputs.modname) }}
+      - name: Upload File
+        id: nexus-upload
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.8
+        if: ${{ inputs.upload }}
         with:
-          name: ${{ fromJson(steps.mod-repack.outputs.modname) }}
-          path: ./out/
+          api_key: ${{ secrets.NEXUSMODS_SESSION_COOKIE }}
+          file_id: ${{ inputs.file_id }}
+          filename: ${{ fromJson(steps.mod-repack.outputs.modname) }}.zip
+          version: ${{ inputs.mod_version }}
+          description: ${{ inputs.mod_description }}
     outputs:
       mod_name: ${{ fromJson(steps.mod-repack.outputs.modname) }}
-  upload-release:
-    needs: ["pack-mod"]
-    uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
-    if: ${{ inputs.upload }}
-    with:
-      nexusmods_game_id: warhammer40kdarktide
-      nexusmods_mod_id: ${{ inputs.nexusmods_mod_id }}
-      mod_filename: ${{ needs.pack-mod.outputs.mod_name }}.zip
-      mod_version: ${{ inputs.mod_version }}
-      mod_description: ${{ inputs.mod_description }}
-      artifact_name: ${{ needs.pack-mod.outputs.mod_name }}
-    secrets:
-      NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
-      NEXUSMODS_SESSION_COOKIE: ${{ secrets.NEXUSMODS_SESSION_COOKIE }}
+      version: ${{ steps.nexus-upload.outputs.version_id }}
+    
